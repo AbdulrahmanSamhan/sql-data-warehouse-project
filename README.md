@@ -123,4 +123,3 @@ Hi there! I'm **Abdulrahman Samhan**, a **Data Analyst, Data Engineer, and Data 
 
 Through my work, I focus on data analysis, business intelligence, data engineering, and creating impactful dashboards that support better decision-making. I enjoy sharing knowledge, simplifying complex concepts, and contributing to the data community by making learning both practical and engaging.
 
-Let's stay in touch! Feel free to connect with me on the following platforms:
