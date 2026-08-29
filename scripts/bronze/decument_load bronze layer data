@@ -1,1 +1,143 @@
+/*
+===============================================================================
+Stored Procedure: bronze.load_bronze
+===============================================================================
+Purpose:
+    Loads raw data from external CSV files into the Bronze Layer tables.
 
+Description:
+    This stored procedure is responsible for the initial ingestion process
+    of the Data Warehouse ETL pipeline.
+
+    For each source table, the procedure:
+        1. Clears existing data using TRUNCATE TABLE.
+        2. Loads fresh data from CSV files using BULK INSERT.
+        3. Captures and displays load duration.
+        4. Logs progress messages during execution.
+
+Data Sources:
+    CRM Source Files:
+        - cust_info.csv
+        - prd_info.csv
+        - sales_details.csv
+
+    ERP Source Files:
+        - loc_a101.csv
+        - cust_az12.csv
+        - px_cat_g1v2.csv
+
+Target Tables:
+    Bronze CRM Tables:
+        - bronze.crm_cust_info
+        - bronze.crm_prd_info
+        - bronze.crm_sales_details
+
+    Bronze ERP Tables:
+        - bronze.erp_loc_a101
+        - bronze.erp_cust_az12
+        - bronze.erp_px_cat_g1v2
+
+Load Strategy:
+    Full Refresh
+
+    Existing data is removed before loading new records.
+    This ensures the Bronze layer always contains the latest
+    raw snapshot from the source systems.
+
+Execution Example:
+    EXEC bronze.load_bronze;
+
+Output:
+    - Table loading progress
+    - Individual table load duration
+    - Total batch execution duration
+    - Error details if execution fails
+
+Dependencies:
+    - Bronze tables must already exist.
+    - SQL Server service account must have access to source files.
+    - BULK INSERT must be enabled.
+    - CSV files must exist in the specified locations.
+
+Warning:
+    This procedure uses TRUNCATE TABLE.
+    Running it will permanently remove all existing records
+    from the Bronze Layer before reloading the data.
+
+===============================================================================
+ETL Flow
+
+Source CSV Files
+        │
+        ▼
+ ┌─────────────┐
+ │ BULK INSERT │
+ └─────────────┘
+        │
+        ▼
+ ┌─────────────┐
+ │   Bronze    │
+ │ Raw Layer   │
+ └─────────────┘
+
+===============================================================================
+Processing Steps
+
+Step 1:
+    Start batch execution timer.
+
+Step 2:
+    Load CRM tables:
+        - crm_cust_info
+        - crm_prd_info
+        - crm_sales_details
+
+Step 3:
+    Load ERP tables:
+        - erp_loc_a101
+        - erp_cust_az12
+        - erp_px_cat_g1v2
+
+Step 4:
+    Calculate total execution duration.
+
+Step 5:
+    Display completion summary.
+
+Step 6:
+    Capture and report errors if any occur.
+
+===============================================================================
+Error Handling
+
+The procedure uses TRY...CATCH to handle failures.
+
+Captured Information:
+    - Error Message
+    - Error Number
+    - Error State
+
+Common Failure Causes:
+    - File not found
+    - Incorrect file path
+    - Permission issues
+    - Data type mismatch
+    - Locked files
+    - Invalid CSV structure
+
+===============================================================================
+Performance Considerations
+
+TABLOCK:
+    Acquires a table-level lock during loading,
+    improving BULK INSERT performance.
+
+FIRSTROW = 2:
+    Skips the header row in CSV files.
+
+TRUNCATE TABLE:
+    Faster than DELETE because it removes all rows
+    without logging individual row deletions.
+
+===============================================================================
+*/
